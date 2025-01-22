@@ -1,25 +1,5 @@
 needsPackage "RandomIdeals"
 
-naiveRandomSquareFreePureBinomialIdeal = method(Options => {DisjointVariables => false})
-naiveRandomSquareFreePureBinomialIdeal(ZZ,Ring) := opts -> (t,R) -> (
-     --t is number of 
-     --Problem: duplicates aren't avoided when "take" is used
-     --this gives ideals with at most t gens, rather than exactly t
-     local randBinomials;
-     if opts.DisjointVariables then (
-	 subs := subsets(generators R, 4);
-	 randQuads := take(random subs,t);
-	 randBinomials = apply(randQuads, s -> (s#0)*(s#1) - (s#2)*(s#3));
-	 ideal randBinomials
-	 )
-     else (
-	 monomialPairs := subsets(subsets (generators R, 2),2);
-	 randPairs := take(random monomialPairs, t);
-	 randBinomials = apply(randPairs, s -> (s#0#0)*(s#0#1) - (s#1#0)*(s#1#1));
-	 ideal randBinomials
-     )
- )
-
 randomPureQuadraticBinomial = method(Options => {DisjointVariables => true})
 randomPureQuadraticBinomial(ZZ,Ring) := opts -> (t,R) -> (
     -- Want exactly t generators
@@ -28,11 +8,11 @@ randomPureQuadraticBinomial(ZZ,Ring) := opts -> (t,R) -> (
     local l;
     local S;
     local toAdd;
-    randBinomial := {};
+    randBinomials := {};
     idealToReturn := ideal(0_R);
     if opts.DisjointVariables then (
 	subs = subsets(generators R, 4);
-	l = #subs
+	l = #subs;
 	while #randBinomials <= t do (
 	    S = subs#(random l);
 	    toAdd = S#0*S#1 - S#2*S#3;
@@ -41,8 +21,7 @@ randomPureQuadraticBinomial(ZZ,Ring) := opts -> (t,R) -> (
 		idealToReturn = ideal(randBinomials)
 		);
 	    );
-	return idealToReturn
-	);
+	)
     else (
 	subs = subsets(generators R, 2);
 	l = #subs;
@@ -59,13 +38,22 @@ randomPureQuadraticBinomial(ZZ,Ring) := opts -> (t,R) -> (
 		idealToReturn = ideal(randBinomials)
 		);
 	    );
-	return idealToReturn
 	);
+    return idealToReturn
     )
 
-	    
-		
-	    
+-*	    
+-- not actually sure what we want here...do we want square free?
+RandomSquareFreePureBinomialIdeal = method(Options => {DisjointVariables => false})
+RandomSquareFreePureBinomialIdeal(ZZ,ZZ,Ring) := (d,t,R) -> (d:t,R)
+-- d: degree of generators
+-- t: num of generators
+-- R: the ring
+RandomSquareFreePureBinomialIdeal(Sequence,Ring) := (S,R) -> (
+    RandomSquareFreePureBinomialIdeal(toList S,R)
+    )
+RandomSquareFreePureBinomialIdeal(List,ZZ,Ring) := (L,R) -> (
+*-
 
 randomPureBinomialIdealDisjointVariables = method()
 randomPureBinomialIdealDisjointVariables(List,Ring) := (L,R) -> (
