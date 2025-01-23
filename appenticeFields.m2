@@ -24,6 +24,7 @@ statistics (Sample, Function) := HashTable => (s,f) -> (
 )
 *- 
 
+statistics = method()
 statistics (List, Function) := HashTable => (s,f) -> (
     fData := apply(s,f);
     mean := (sum fData)/#s; -- <- should the mean be returned as RR? 
